@@ -4,6 +4,38 @@
 
 
 addLoadEvent(prepareSlideshow);
+addLoadEvent(prepareInternalNav);
+
+function showSection(id) {
+	var sections = document.getElementsByTagName("section");
+	for (var i = 0; i < sections.length; i++) {
+		if (sections[i].getAttribute("id") != id) {
+			sections[i].style.display = "none";
+		} else {
+			sections[i].style.display = "block";
+		}
+	}
+}
+
+function prepareInternalNav() {
+	if (!document.getElementsByTagName) return false;
+	if (!document.getElementById) return false;
+	var articles = document.getElementsByTagName("article");
+	if (articles.length == 0) return false;
+	var navs = articles[0].getElementsByTagName("nav");
+	var nav = navs[0];
+	
+	var links = nav.getElementsByTagName("a");
+	for (var i = 0; i < links.length; i++) {
+		var sectionId = links[i].getAttribute("href").split("#")[1];
+		document.getElementById(sectionId).style.display = "none";
+		links[i].sectionId = sectionId;
+		links[i].onclick = function() {
+			showSection(this.sectionId);
+			return false;
+		}
+	}
+}
 
 function prepareSlideshow() {
 	if (!document.getElementsByTagName) return false;
@@ -12,6 +44,11 @@ function prepareSlideshow() {
 	var intro = document.getElementById("intro");
 	var slideshow = document.createElement("div");
 	slideshow.setAttribute("id", "slideshow");
+	var frame = document.createElement("img");
+	frame.setAttribute("src", "images/frame.gif");
+	frame.setAttribute("alt", "");
+	frame.setAttribute("id", "frame");
+	slideshow.appendChild(frame);
 	var preview = document.createElement("img");
 	preview.setAttribute("src", "images/slideshow.gif");
 	preview.setAttribute("alt", "a glimpse of what awaits you");
@@ -19,7 +56,7 @@ function prepareSlideshow() {
 	slideshow.appendChild(preview);
 	insertAfter(slideshow, intro);
 	
-	var links = intro.getElementsByTagName("a");
+	var links = document.getElementsByTagName("a");
 	var destination;
 	for (var i = 0; i < links.length; i++) {
 		links[i].onmouseover = function() {
